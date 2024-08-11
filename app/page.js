@@ -3,12 +3,13 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { Box, Stack, Typography, TextField, Button } from '@mui/material';
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function Home() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hello! I'm NetworkNinja, a chatbot that helps you connect with others. How can I assist you today?`
+      content: `Hello! I'm **NetworkNinja**, a chatbot that helps you connect with others. How can I assist you today?`
     }
   ]);
   const [message, setMessage] = useState("");
@@ -91,11 +92,11 @@ export default function Home() {
               <Box
                 bgcolor={message.role === "assistant" ? "primary.main" : "secondary.main"}
                 color='white'
-                p={2}
+                p={2.3}
                 borderRadius="16px"
                 maxWidth="70%"
               >
-                <Typography variant="body1">{message.content}</Typography>
+                <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
               </Box>
             </Box>
           ))}
