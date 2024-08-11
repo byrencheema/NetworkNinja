@@ -1,7 +1,8 @@
 'use client'
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Stack, Typography, TextField, Button } from '@mui/material';
+import Markdown from "react-markdown";
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -10,8 +11,17 @@ export default function Home() {
       content: `Hello! I'm NetworkNinja, a chatbot that helps you connect with others. How can I assist you today?`
     }
   ]);
-
   const [message, setMessage] = useState("");
+
+  // Create a ref for the message container
+  const messagesEndRef = useRef(null);
+
+  // Scroll to the bottom of the message container when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const sendMessage = async () => {
     setMessage("");
@@ -89,6 +99,8 @@ export default function Home() {
               </Box>
             </Box>
           ))}
+          {/* Add an invisible element to serve as the scrolling target */}
+          <div ref={messagesEndRef} />
         </Stack>
         <Stack direction="row" spacing={2} p={2} alignItems="center">
           <TextField
