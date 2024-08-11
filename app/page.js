@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Box, Stack, Typography, TextField, Button } from '@mui/material';
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import backgroundImage from '../img/background.jpeg'; // Adjust this path if needed
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -62,6 +63,11 @@ export default function Home() {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      sx={{
+        backgroundImage: `url(${backgroundImage.src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
     >
       <Stack
         direction="column"
