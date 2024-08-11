@@ -15,7 +15,7 @@ export default function Home() {
 
   const sendMessage = async () => {
     setMessage("");
-    setMessages([...messages, { role: "user", content: message }, { role: "assistant", content: "Loading..." }]);
+    setMessages([...messages, { role: "user", content: message }, { role: "assistant", content: "" }]);
     const response = fetch("/api/chat", {
       method: "POST",
       headers: {
