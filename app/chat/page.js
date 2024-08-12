@@ -25,17 +25,36 @@ export default function Home() {
 
   const sendMessage = async () => {
     if (message.trim()) {
-      setMessages([...messages, { role: "user", content: message }, { role: "assistant", content: "" }]);
+      const newMessages = [...messages, { role: "user", content: message }, { role: "assistant", content: "" }];
+      setMessages(newMessages);
       setMessage("");
 
-      // Simulate a response from the chatbot
-      setTimeout(() => {
-        setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          updatedMessages[updatedMessages.length - 1].content = "I'm here to help you with your networking!";
-          return updatedMessages;
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify([...messages, { role: "user", content: message }])
+      });
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = "";
+
+      reader.read().then(function processText({ done, value }) {
+        if (done) {
+          return result;
+        }
+
+        const text = decoder.decode(value, { stream: true });
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1];
+          let otherMessages = messages.slice(0, messages.length - 1);
+          return [...otherMessages, { ...lastMessage, content: lastMessage.content + text }];
         });
-      }, 1000);
+
+        return reader.read().then(processText);
+      });
     }
   };
 
@@ -52,6 +71,7 @@ export default function Home() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: 3,
+        backgroundColor: '#FFFFFF',
       }}
     >
       <Stack
@@ -65,7 +85,7 @@ export default function Home() {
         overflow="hidden"
         boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
       >
-        <Box bgcolor="#007AFF" color="white" padding={2} textAlign="center">
+        <Box bgcolor="#865CA6" color="white" padding={2} textAlign="center">
           <Typography variant="h5" fontWeight="bold">NetworkNinja</Typography>
           <Typography variant="body2">Your networking assistant</Typography>
         </Box>
@@ -88,12 +108,12 @@ export default function Home() {
             >
               <Box
                 sx={{
-                  bgcolor: message.role === "assistant" ? "#007AFF" : "#5856D6",
+                  bgcolor: message.role === "assistant" ? (index % 2 === 0 ? "#865CA6" : "#754e9c") : "#220C10",
                   color: 'white',
                   padding: 2,
                   borderRadius: "12px",
                   maxWidth: "75%",
-                  boxShadow: message.role === "assistant" ? "0 4px 8px rgba(0, 122, 255, 0.3)" : "0 4px 8px rgba(88, 86, 214, 0.3)",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 <Markdown remarkPlugins={[remarkGfm]}>{message.content}</Markdown>
@@ -117,7 +137,7 @@ export default function Home() {
             variant="contained"
             color="primary"
             onClick={sendMessage}
-            sx={{ height: '56px', minWidth: '120px' }}
+            sx={{ height: '56px', minWidth: '120px', backgroundColor: '#865CA6', '&:hover': { backgroundColor: '#754e9c' } }}
           >
             Send
           </Button>
