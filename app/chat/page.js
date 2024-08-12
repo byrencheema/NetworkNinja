@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from "react";
 import { Box, Stack, TextField, Button, Typography } from '@mui/material';
+import Image from 'next/image';
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -8,7 +9,8 @@ export default function Home() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hello! I'm **NetworkNinja**, a chatbot that helps you grow your network. How can I assist you today?`
+      content: `Hello! I'm **NetworkNinja**, a chatbot that helps you grow your network. How can I assist you today?`,
+      icon: '/img/sword.png'
     }
   ]);
   const [message, setMessage] = useState("");
@@ -25,7 +27,7 @@ export default function Home() {
 
   const sendMessage = async () => {
     if (message.trim()) {
-      const newMessages = [...messages, { role: "user", content: message }, { role: "assistant", content: "" }];
+      const newMessages = [...messages, { role: "user", content: message }, { role: "assistant", content: "", icon: '/img/fog.png' }];
       setMessages(newMessages);
       setMessage("");
 
@@ -85,9 +87,17 @@ export default function Home() {
         overflow="hidden"
         boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
       >
-        <Box bgcolor="#865CA6" color="white" padding={2} textAlign="center">
-          <Typography variant="h5" fontWeight="bold">NetworkNinja</Typography>
-          <Typography variant="body2">Your networking assistant</Typography>
+        <Box bgcolor="#858AE3" color="white" padding={2} display="flex" alignItems="center" justifyContent="center">
+          <Image
+            src="/img/sword.png"
+            alt="NetworkNinja Logo"
+            width={40}
+            height={40}
+            priority
+          />
+          <Typography variant="h5" fontWeight="bold" marginLeft={1}>
+            NetworkNinja
+          </Typography>
         </Box>
 
         <Stack
@@ -104,11 +114,21 @@ export default function Home() {
               key={index}
               display="flex"
               justifyContent={message.role === "assistant" ? "flex-start" : "flex-end"}
+              alignItems="center"
               width="100%"
             >
+              {message.role === "assistant" && (
+                <Image
+                  src={message.icon}
+                  alt="Ninja Icon"
+                  width={30}
+                  height={30}
+                  style={{ marginRight: 10 }}
+                />
+              )}
               <Box
                 sx={{
-                  bgcolor: message.role === "assistant" ? (index % 2 === 0 ? "#865CA6" : "#754e9c") : "#220C10",
+                  bgcolor: message.role === "assistant" ? (index % 2 === 0 ? "#858AE3" : "#754e9c") : "#003F91",
                   color: 'white',
                   padding: 2,
                   borderRadius: "12px",
@@ -137,7 +157,7 @@ export default function Home() {
             variant="contained"
             color="primary"
             onClick={sendMessage}
-            sx={{ height: '56px', minWidth: '120px', backgroundColor: '#865CA6', '&:hover': { backgroundColor: '#754e9c' } }}
+            sx={{ height: '56px', minWidth: '120px', backgroundColor: '#858AE3', '&:hover': { backgroundColor: '#754e9c' } }}
           >
             Send
           </Button>
